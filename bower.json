@@ -1,0 +1,13 @@
+{
+    "name": "pole-mock",
+    "version": "0.0.1",
+    "homepage": "https://github.com/maxzhang/pole-mock",
+    "authors": [
+        "maxzhang <zhangdaiping@gmail.com>"
+    ],
+    "main": "pole-mock.js",
+    "keywords": [
+        "pole", "pole-mock"
+    ],
+    "license": "MIT"
+}
