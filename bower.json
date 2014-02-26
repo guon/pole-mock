@@ -7,7 +7,17 @@
     ],
     "main": "pole-mock.js",
     "keywords": [
-        "pole", "pole-mock"
+        "pole",
+        "pole-mock"
     ],
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "mustache": "0.8.1"
+    },
+    "ignore": [
+        "**/.*",
+        "lib/**",
+        "Gruntfile.js",
+        "package.json"
+    ]
 }
