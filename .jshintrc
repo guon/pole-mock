@@ -1,0 +1,15 @@
+{
+    "curly": false,
+    "eqeqeq": false,
+    "forin": false,
+    "newcap": false,
+    "unused": false,
+    "boss": true,
+    "eqnull": false,
+    "evil": true,
+    "laxcomma": true,
+    "loopfunc": true,
+    "multistr": true,
+    "scripturl": true,
+    "sub": true
+}

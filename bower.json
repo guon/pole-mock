@@ -2,22 +2,24 @@
     "name": "pole-mock",
     "version": "0.0.1",
     "homepage": "https://github.com/polejs/pole-mock",
-    "authors": [
-        "maxzhang <zhangdaiping@gmail.com>"
-    ],
     "main": "pole-mock.js",
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "lib",
+        "test",
+        "*.md",
+        "Gruntfile.js",
+        "package.json"
+    ],
     "keywords": [
         "pole",
         "pole-mock"
     ],
-    "license": "MIT",
     "dependencies": {
         "mustache": "0.8.1"
     },
-    "ignore": [
-        "**/.*",
-        "lib/**",
-        "Gruntfile.js",
-        "package.json"
-    ]
+    "devDependencies": {
+        "requirejs": "2.1.11"
+    }
 }
