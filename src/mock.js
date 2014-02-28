@@ -6,7 +6,25 @@ define([
     'use strict';
 
     pole.initMock = function(configSrc, callbackFn) {
-        ajaxSend(configSrc + /\.json$/.test(configSrc) ? '' : '.json' , function (response) {
+        /*
+         * pole-mock-config格式：
+         *  {
+         *      "templateEngine": "mustache", // 默认模板引擎为"mustache"
+         *      "actions": {
+         *          "xxx": "mock data url" // 本地mock数据url，键值对格式
+         *      },
+         *      "templates": {
+         *          "xxx": "template url" // 本地模板url，键值对格式
+         *      }
+         *  }
+         */
+        ajaxSend(configSrc + /\.json$/.test(configSrc) ? '' : '.json', function(response) {
+            var actions = response.actions,
+                templates = response.templates,
+                key;
+            /*if (actions) {
+                for (key in response.)
+            }*/
 
         });
     };

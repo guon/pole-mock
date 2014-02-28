@@ -14,9 +14,11 @@
 <script type="text/javascript" src="../bower_components/qunit/qunit/qunit.js"></script>
 <script type="text/javascript" src="../bower_components/requirejs/require.js"></script>
 <script type="text/javascript">
+(function() {
     requirejs.config({
         baseUrl: '../src'
     });
+
     require(['hashmap'], function(HashMap) {
         module('Test HashMap', {
             setup: function() {
@@ -109,6 +111,7 @@
             ok(this.map.has(objVal), '验证value是否存在');
         });
     });
+}());
 </script>
 
 </body>

@@ -13,7 +13,23 @@ module.exports = function(grunt) {
         },
 
         qunit: {
-            alltests: ['test/*.html']
+            alltests: {
+                options: {
+                    urls: [
+                        'http://localhost:8008/test/test_hashmap.html'
+                        //'http://localhost:8008/test/test_ajax.html'
+                    ]
+                }
+            }
+        },
+
+        connect: {
+            server: {
+                options: {
+                    port: 8008,
+                    base: './'
+                }
+            }
         },
 
         clean: {
@@ -33,6 +49,7 @@ module.exports = function(grunt) {
                     'src/var/document.js',
                     'src/var/slice.js',
                     'src/var/format-string.js',
+                    'src/var/noop.js',
                     'src/core.js',
                     'src/hashmap.js',
                     'src/adapter/mustache.js',
@@ -56,20 +73,21 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('default', ['jshint:beforeconcat']);
-    grunt.registerTask('test', ['jshint:beforeconcat', 'qunit']);
-    grunt.registerTask('build', ['jshint:beforeconcat', 'qunit', 'clean', 'concat', 'jshint:afterconcat']);
+    grunt.registerTask('test', ['jshint:beforeconcat', 'connect', 'qunit']);
+    grunt.registerTask('build', ['jshint:beforeconcat', 'connect', 'qunit', 'clean', 'concat', 'jshint:afterconcat']);
 
     // 处理源码，将requirejs的define声明移除
     function convert(content, filePath) {
         content = content
-            .replace(/define\([^\{]*?\{[\f\r\t\v]*/, '')
-            .replace(/(?:[ \f\r\t\v]*return\s+[^\}]+;?\s*)?\}\);[^\}\w]*$/, '')
+            .replace(/define\([^\{]*?\{/, '')
+            .replace(/(?:return\s+[^\}]+;?\s*)?\}\);[^\}\w]*$/, '')
             .replace(/^\s*(?:'use\sstrict'|"use\sstrict")\s*;/, '')
             .replace(/@VERSION/g, grunt.config("pkg.version"));
         return content;

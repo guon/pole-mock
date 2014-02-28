@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Test Ajax</title>
+<link rel="stylesheet" href="../bower_components/qunit/qunit/qunit.css" />
+</head>
+
+<body>
+
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<script type="text/javascript" src="../bower_components/qunit/qunit/qunit.js"></script>
+<script type="text/javascript" src="../bower_components/requirejs/require.js"></script>
+<script type="text/javascript">
+(function() {
+    var location = document.location,
+        origin = location.origin,
+        port = location.port,
+        pathname = location.pathname,
+        host = origin + (port ? ':' + port : '') + (pathname.indexOf('/') != -1 ? pathname.substring(0, pathname.lastIndexOf('/')) : '');
+
+    if (host.charAt(host.length - 1) != '/') {
+        host += '/';
+    }
+
+    requirejs.config({
+        baseUrl: '../src'
+    });
+
+    require(['ajax'], function(ajax) {
+        module('Test Ajax');
+
+        asyncTest('ajax getJSON', function() {
+            ajax.getJSON(host + 'mock-config.json', function(response) {
+                ok(response.templateEngine, '使用AJAX获取json数据');
+                start();
+            });
+        });
+    });
+}());
+</script>
+
+</body>
+</html>

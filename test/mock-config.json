@@ -1,0 +1,9 @@
+{
+    "templateEngine": "mustache",
+    "actions": {
+        "main": "main.json"
+    },
+    "templates": {
+        "main": "main.tpl"
+    }
+}

@@ -3,9 +3,9 @@
     'use strict';
 
     var document = window.document;
-
+    
     var slice = Array.prototype.slice;
-
+    
     var formatRe = /\{(\d+)\}/g,
         formatString = function(str) {
             var args = slice.call(arguments, 1);
@@ -13,7 +13,9 @@
                 return args[i];
             });
         };
-
+    
+    var noop = function() {};
+    
 
     var pole = {
         // the version of pole-mock
@@ -81,7 +83,7 @@
     // pole.template的快捷方法
     pole.tpl = pole.template;
 
-
+    
 
     function HashMap(keyFn) {
         this.map = {};
@@ -196,7 +198,7 @@
         }
     };
 
-
+    
 
     function MustacheEngine() {
         this.nextHandler = null;
@@ -214,7 +216,7 @@
         }
     };
 
-
+    
 
     function DoTEngine() {
         this.nextHandler = null;
@@ -232,7 +234,7 @@
         }
     };
 
-
+    
 
     var templateEngines = {
         mustache: new MustacheEngine(),
@@ -248,15 +250,177 @@
         return false;
     }
 
+    
 
+    var ajax = (function() {
+        var getXhrInstance = (function() {
+            var options = [function() {
+                    return new XMLHttpRequest();
+                }, function() {
+                    return new ActiveXObject('MSXML2.XMLHTTP.3.0');
+                }, function() {
+                    return new ActiveXObject('MSXML2.XMLHTTP');
+                }, function() {
+                    return new ActiveXObject('Microsoft.XMLHTTP');
+                }],
+                i = 0,
+                len = options.length,
+                xhr;
 
+            for (; i < len; ++i) {
+                try {
+                    xhr = options[i];
+                    xhr();
+                    break;
+                } catch(e) {
+                }
+            }
+            return xhr;
+        }());
 
+        function send(method, url, data, successFn, failFn, headers) {
+            var xhr = getXhrInstance(),
+                xhrTimeout,
+                key;
 
-    pole.initMock = function(configs) {
-        configs = configs || {};
+            if (arguments.length === 2) {
+                successFn = url;
+                url = method;
+                method = null;
+            } else if (arguments.length === 3) {
+                successFn = data;
+                data = url;
+                url = method;
+                method = null;
+            }
 
+            successFn = successFn || noop;
+            failFn = failFn || noop;
+            headers = headers || {};
+            if (!headers['Content-Type']) {
+                headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+            }
+            if (!headers['X-Requested-With']) {
+                headers['X-Requested-With'] = 'XMLHttpRequest';
+            }
 
+            xhr.open(method || 'GET', url, true);
+
+            for (key in headers) {
+                if (headers.hasOwnProperty(key)) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+
+            xhrTimeout = setTimeout(function() {
+                clearTimeout(xhrTimeout);
+                xhrTimeout = null;
+                abortXhr(xhr);
+                failFn();
+            }, 300000);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    clearTimeout(xhrTimeout);
+                    if (xhr.status === 200) {
+                        successFn(xhr.responseText);
+                    } else {
+                        failFn(xhr);
+                    }
+                    xhr = null;
+                }
+            };
+            xhr.send(data);
+        }
+
+        function getJSON(method, url, data, successFn, failFn, headers) {
+            if (arguments.length === 2) {
+                successFn = url;
+                url = method;
+                method = null;
+            } else if (arguments.length === 3) {
+                successFn = data;
+                data = url;
+                url = method;
+                method = null;
+            }
+
+            successFn = successFn || noop;
+            var successFnProxy = function(response) {
+                successFn(JSON.parse(response));
+            };
+
+            headers = headers || {};
+            headers['Content-Type'] = 'application/json';
+            send(method, url, data, successFnProxy, failFn, headers);
+        }
+
+        function abortXhr(xhr) {
+            try {
+                xhr.onreadystatechange = null;
+            } catch (e) {
+                xhr = noop;
+            }
+            xhr.abort();
+            xhr = null;
+        }
+
+        return {
+            send: send,
+            getJSON: getJSON
+        };
+    }());
+
+    
+
+    pole.initMock = function(configSrc, callbackFn) {
+        /*
+         * pole-mock-config格式：
+         *  {
+         *      "templateEngine": "mustache", // 默认模板引擎为"mustache"
+         *      "actions": {
+         *          "xxx": "mock data url" // 本地mock数据url，键值对格式
+         *      },
+         *      "templates": {
+         *          "xxx": "template url" // 本地模板url，键值对格式
+         *      }
+         *  }
+         */
+        ajaxSend(configSrc + /\.json$/.test(configSrc) ? '' : '.json', function(response) {
+            var actions = response.actions,
+                templates = response.templates,
+                key;
+            /*if (actions) {
+                for (key in response.)
+            }*/
+
+        });
     };
+
+    (function() {
+        var scripts = document.getElementsByTagName('script'),
+            mockScriptNode,
+            configSrc,
+            mainScriptSrc;
+
+        if (scripts) {
+            for (var i = 0, len = scripts.length; i < len; i++) {
+                if (/pole\-mock\.js$/.test(scripts[i].src)) {
+                    mockScriptNode = scripts[i];
+                    configSrc = mockScriptNode.getAttribute('data-config');
+                    mainScriptSrc = mockScriptNode.getAttribute('data-main');
+                    break;
+                }
+            }
+            if (configSrc) {
+                pole.initMock(configSrc, function() {
+                    if (mainScriptSrc) {
+
+                    }
+                });
+            }
+        }
+    }());
 
 
 
