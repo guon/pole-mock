@@ -4,6 +4,7 @@ define([
         'mock',
         'parser'
 ], function(pole) {
+    'use strict';
 
     return pole;
 
