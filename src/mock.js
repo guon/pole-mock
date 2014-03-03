@@ -19,9 +19,7 @@ define([
                 templateReadyTimer = setTimeout(templateReady, 50);
                 return;
             }
-            if (callbackFn) {
-                callbackFn();
-            }
+            renderTemplate();
         }
 
         function requestTemplate(name, options) {
@@ -47,6 +45,14 @@ define([
             }, {
                 'Content-Type': 'text/plain'
             });
+        }
+
+        function renderTemplate() {
+
+
+            if (callbackFn) {
+                callbackFn();
+            }
         }
 
         /*
@@ -110,7 +116,7 @@ define([
                 pole.initMock(configUrl, function() {
                     if (mainScriptSrc) {
                         mainScriptNode = document.createElement('script');
-                        mainScriptNode.src = suffix(mainScriptSrc, 'js');;
+                        mainScriptNode.src = suffix(mainScriptSrc, 'js');
                         mainScriptNode.type = 'text/javascript';
                         if (mockScriptNode.nextSibling) {
                             mockScriptNode.parentNode.insertBefore(mainScriptNode, mockScriptNode.nextSibling);

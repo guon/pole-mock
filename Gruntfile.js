@@ -18,6 +18,7 @@ module.exports = function(grunt) {
                     urls: [
                         'http://localhost:8008/test/test_hashmap.html'
                         //'http://localhost:8008/test/test_ajax.html'
+                        //'http://localhost:8008/test/test_initmock.html'
                     ]
                 }
             }
