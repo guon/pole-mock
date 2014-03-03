@@ -16,9 +16,10 @@ module.exports = function(grunt) {
             alltests: {
                 options: {
                     urls: [
-                        'http://localhost:8008/test/test_hashmap.html'
-                        //'http://localhost:8008/test/test_ajax.html'
-                        //'http://localhost:8008/test/test_initmock.html'
+                        'http://localhost:8008/test/test_hashmap.html',
+                        'http://localhost:8008/test/test_ajax.html',
+                        'http://localhost:8008/test/test_pole.html',
+                        'http://localhost:8008/test/test_mock.html'
                     ]
                 }
             }
