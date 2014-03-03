@@ -65,7 +65,7 @@ define(['var/noop'], function(noop) {
                 clearTimeout(xhrTimeout);
                 xhrTimeout = null;
                 abortXhr(xhr);
-                failFn();
+                failFn('TIMEOUT');
             }, 300000);
 
             xhr.onreadystatechange = function() {
@@ -74,7 +74,7 @@ define(['var/noop'], function(noop) {
                     if (xhr.status === 200) {
                         successFn(xhr.responseText);
                     } else {
-                        failFn(xhr);
+                        failFn(xhr, 'ERROR');
                     }
                     xhr = null;
                 }

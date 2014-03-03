@@ -27,7 +27,7 @@ define([
             return;
         }
         for (name in actions) {
-            actionMap.push(name, actions[name]);
+            actionMap.put(name, actions[name]);
         }
     };
 

@@ -1,9 +1,9 @@
 {
     "templateEngine": "mustache",
     "actions": {
-        "main": "main.json"
+        "main": "data/mock-data"
     },
     "templates": {
-        "main": "main.tpl"
+        "templateMustache": "data/template-mustache"
     }
 }

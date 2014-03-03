@@ -1,0 +1,13 @@
+{
+    "templateEngine": "doT",
+    "actions": {
+        "main": "data/mock-data"
+    },
+    "templates": {
+        "templateMustache": {
+            "url": "data/template-mustache",
+            "engine": "mustache"
+        },
+        "templateDoT": "data/template-doT"
+    }
+}

@@ -1,4 +1,4 @@
-define(function() {
+define(['var/slice'], function(slice) {
     var formatRe = /\{(\d+)\}/g,
         formatString = function(str) {
             var args = slice.call(arguments, 1);

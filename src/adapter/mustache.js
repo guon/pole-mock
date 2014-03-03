@@ -1,4 +1,4 @@
-define(['Mustache'], function(Mustache) {
+define(['mustache'], function(Mustache) {
     'use strict';
 
     function MustacheEngine() {
@@ -10,7 +10,8 @@ define(['Mustache'], function(Mustache) {
 
         compile: function(engine, content) {
             if (engine == 'mustache') {
-                return Mustache.parse(content);
+                Mustache.parse(content);
+                return content;
             } else {
                 return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
             }

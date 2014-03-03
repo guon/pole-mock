@@ -48,8 +48,9 @@ module.exports = function(grunt) {
                 src: [
                     'src/var/document.js',
                     'src/var/slice.js',
-                    'src/var/format-string.js',
                     'src/var/noop.js',
+                    'src/var/format-string.js',
+                    'src/var/suffix.js',
                     'src/core.js',
                     'src/hashmap.js',
                     'src/adapter/mustache.js',

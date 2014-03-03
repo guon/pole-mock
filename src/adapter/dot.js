@@ -1,4 +1,4 @@
-define(['doT'], function(doT) {
+define(['dot'], function(doT) {
     'use strict';
 
     function DoTEngine() {
