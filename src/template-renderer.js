@@ -1,21 +1,28 @@
 define([
-        'adapter/mustache',
-        'adapter/dot'
+    'adapter/mustache',
+    'adapter/dot'
 ], function(MustacheEngine, DoTEngine) {
 
-    var templateEngines = {
-        mustache: new MustacheEngine(),
-        doT: new DoTEngine()
+    var templateRenderer = {
+        engines: {
+            mustache: new MustacheEngine(),
+            doT: new DoTEngine()
+        },
+        create: function(engine, content) {
+            if (engine) {
+                return this.engines.mustache.compile(engine.toLowerCase(), content);
+            }
+            return false;
+        },
+        render: function(engine, renderer, data) {
+            if (engine) {
+                return this.engines.mustache.render(engine.toLowerCase(), renderer, data);
+            }
+            return false;
+        }
     };
 
-    templateEngines.mustache.nextHandler = templateEngines.doT;
+    templateRenderer.engines.mustache.nextHandler = templateRenderer.engines.doT;
 
-    function createTemplateRenderer(engine, content) {
-        if (engine) {
-            return templateEngines.mustache.compile(engine.toLowerCase(), content);
-        }
-        return false;
-    }
-
-    return createTemplateRenderer;
+    return templateRenderer;
 });

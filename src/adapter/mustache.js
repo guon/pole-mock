@@ -5,16 +5,22 @@ define(['mustache'], function(Mustache) {
         this.nextHandler = null;
     }
 
-    MustacheEngine.prototype = {
-        constructor: MustacheEngine,
+    MustacheEngine.prototype.engine = 'mustache';
 
-        compile: function(engine, content) {
-            if (engine == 'mustache') {
-                Mustache.parse(content);
-                return content;
-            } else {
-                return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
-            }
+    MustacheEngine.prototype.compile = function(engine, content) {
+        if (engine == this.engine) {
+            Mustache.parse(content);
+            return content;
+        } else {
+            return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
+        }
+    };
+
+    MustacheEngine.prototype.render = function(engine, tpl, data) {
+        if (engine == this.engine) {
+            return Mustache.render(tpl, data);
+        } else {
+            return this.nextHandler ? this.nextHandler.render(engine, tpl, data) : false;
         }
     };
 

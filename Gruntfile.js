@@ -64,7 +64,6 @@ module.exports = function(grunt) {
                     'src/template-renderer.js',
                     'src/ajax.js',
                     'src/mock.js',
-                    'src/parser.js',
                     'src/global.js'
                 ],
                 dest: 'pole-mock.js'

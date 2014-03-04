@@ -1,6 +1,6 @@
 define([
-        'core',
-        'var/document'
+    'core',
+    'var/document'
 ], function(pole, document) {
     'use strict';
 

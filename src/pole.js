@@ -1,8 +1,8 @@
 define([
-        'core',
-        'adapter/mustache',
-        'mock',
-        'parser'
+    'core',
+    'adapter/mustache',
+    'mock',
+    'parser'
 ], function(pole) {
     'use strict';
 

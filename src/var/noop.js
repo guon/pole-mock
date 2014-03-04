@@ -1,4 +1,4 @@
 define(function() {
-    function noop() {}
+    var noop = function() {};
     return noop;
 });

@@ -1,10 +1,10 @@
 define([
-        'hashmap',
-        'template-renderer',
-        'var/document',
-        'var/slice',
-        'var/format-string'
-], function(HashMap, createTemplateRenderer, document, slice, formatString) {
+    'hashmap',
+    'template-renderer',
+    'var/document',
+    'var/slice',
+    'var/format-string'
+], function(HashMap, templateRenderer, document, slice, formatString) {
     'use strict';
 
     var pole = {
@@ -51,9 +51,10 @@ define([
             tpl = {};
             if (typeof templates[name] === 'string') {
                 tpl.content = templates[name];
+                tpl.engine = pole.defaultTemplateEngine;
             } else {
                 tpl.content = templates[name].content;
-                tpl.engine = templates[name].engine;
+                tpl.engine = templates[name].engine || pole.defaultTemplateEngine;
             }
             templateMap.put(name, tpl);
         }
@@ -61,10 +62,24 @@ define([
 
     pole.template = function(name) {
         var tpl = templateMap.get(name);
-        if (!tpl.renderer) {
-            tpl.renderer = createTemplateRenderer(tpl.engine || pole.defaultTemplateEngine, tpl.content);
+        if (tpl) {
+            if (!tpl.renderer) {
+                tpl.renderer = templateRenderer.create(tpl.engine, tpl.content);
+            }
+            return tpl.renderer;
         }
-        return tpl.renderer;
+        return null;
+    };
+
+    pole.render = function(name, data) {
+        var tpl = templateMap.get(name);
+        if (tpl) {
+            if (!tpl.renderer) {
+                tpl.renderer = templateRenderer.create(tpl.engine, tpl.content);
+            }
+            return templateRenderer.render(tpl.engine, tpl.renderer, data);
+        }
+        return false;
     };
 
     // pole.action的快捷方法

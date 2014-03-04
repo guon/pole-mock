@@ -6,20 +6,20 @@
     
     var slice = Array.prototype.slice;
     
-    function noop() {}
+    var noop = function() {};
     
     var formatRe = /\{(\d+)\}/g;
-    function formatString(str) {
+    var formatString = function(str) {
         var args = slice.call(arguments, 1);
         return str.replace(formatRe, function(m, i) {
             return args[i];
         });
-    }
+    };
     
-    function suffix(str, postfix) {
+    var suffix = function(str, postfix) {
         var re = new RegExp('.' + postfix + '$', 'i');
         return !re.test(str) ? str + '.' + postfix : str;
-    }
+    };
     
 
     var pole = {
@@ -66,9 +66,10 @@
             tpl = {};
             if (typeof templates[name] === 'string') {
                 tpl.content = templates[name];
+                tpl.engine = pole.defaultTemplateEngine;
             } else {
                 tpl.content = templates[name].content;
-                tpl.engine = templates[name].engine;
+                tpl.engine = templates[name].engine || pole.defaultTemplateEngine;
             }
             templateMap.put(name, tpl);
         }
@@ -76,10 +77,24 @@
 
     pole.template = function(name) {
         var tpl = templateMap.get(name);
-        if (!tpl.renderer) {
-            tpl.renderer = createTemplateRenderer(tpl.engine || pole.defaultTemplateEngine, tpl.content);
+        if (tpl) {
+            if (!tpl.renderer) {
+                tpl.renderer = templateRenderer.create(tpl.engine, tpl.content);
+            }
+            return tpl.renderer;
         }
-        return tpl.renderer;
+        return null;
+    };
+
+    pole.render = function(name, data) {
+        var tpl = templateMap.get(name);
+        if (tpl) {
+            if (!tpl.renderer) {
+                tpl.renderer = templateRenderer.create(tpl.engine, tpl.content);
+            }
+            return templateRenderer.render(tpl.engine, tpl.renderer, data);
+        }
+        return false;
     };
 
     // pole.action的快捷方法
@@ -98,109 +113,105 @@
         }
     }
 
-    HashMap.prototype = {
-        constructor: HashMap,
+    HashMap.prototype.size = function() {
+        return this.length;
+    };
 
-        size: function() {
-            return this.length;
-        },
+    HashMap.prototype.getKey = function(o) {
+        return o.id;
+    };
 
-        getKey: function(o) {
-            return o.id;
-        },
-
-        put: function(key, value) {
-            if (value === undefined) {
-                value = key;
-                key = this.getKey(value);
-            }
-
-            if (!this.hasKey(key)) {
-                ++this.length;
-            }
-            Object.defineProperty(this.map, key, {
-                value: value,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
-
-            return value;
-        },
-
-        get: function(key) {
-            return this.map[key];
-        },
-
-        remove: function(key) {
-            if (this.hasKey(key)) {
-                delete this.map[key];
-                --this.length;
-                return true;
-            }
-            return false;
-        },
-
-        clear: function() {
-            this.map = {};
-            this.length = 0;
-            return this;
-        },
-
-        hasKey: function(key) {
-            return this.map[key] !== undefined;
-        },
-
-        has: function(value) {
-            var ret = false;
-            this.each(function(key, val) {
-                if (value === val) {
-                    ret = true;
-                    return false;
-                }
-            });
-            return ret;
-        },
-
-        keys: function() {
-            return this.getData(true);
-        },
-
-        values: function() {
-            return this.getData(false);
-        },
-
-        getData: function(isKey) {
-            var arr = [];
-            this.each(function(key, value) {
-                arr.push(isKey ? key : value);
-            });
-            return arr;
-        },
-
-        each: function(fn, scope) {
-            var items = this.map,
-                key,
-                length = this.length;
-
-            scope = scope || this;
-            for (key in items) {
-                if (items.hasOwnProperty(key)) {
-                    if (fn.call(scope, key, items[key], length) === false) {
-                        break;
-                    }
-                }
-            }
-            return this;
-        },
-
-        clone: function() {
-            var map = new HashMap();
-            this.each(function(key, value) {
-                map.put(key,value);
-            });
-            return map;
+    HashMap.prototype.put = function(key, value) {
+        if (value === undefined) {
+            value = key;
+            key = this.getKey(value);
         }
+
+        if (!this.hasKey(key)) {
+            ++this.length;
+        }
+        Object.defineProperty(this.map, key, {
+            value: value,
+            writable: true,
+            enumerable: true,
+            configurable: true
+        });
+
+        return value;
+    };
+
+    HashMap.prototype.get = function(key) {
+        return this.map[key];
+    };
+
+    HashMap.prototype.remove = function(key) {
+        if (this.hasKey(key)) {
+            delete this.map[key];
+            --this.length;
+            return true;
+        }
+        return false;
+    };
+
+    HashMap.prototype.clear = function() {
+        this.map = {};
+        this.length = 0;
+        return this;
+    };
+
+    HashMap.prototype.hasKey = function(key) {
+        return this.map[key] !== undefined;
+    };
+
+    HashMap.prototype.has = function(value) {
+        var ret = false;
+        this.each(function(key, val) {
+            if (value === val) {
+                ret = true;
+                return false;
+            }
+        });
+        return ret;
+    };
+
+    HashMap.prototype.keys = function() {
+        return this.getData(true);
+    };
+
+    HashMap.prototype.values = function() {
+        return this.getData(false);
+    };
+
+    HashMap.prototype.getData = function(isKey) {
+        var arr = [];
+        this.each(function(key, value) {
+            arr.push(isKey ? key : value);
+        });
+        return arr;
+    };
+
+    HashMap.prototype.each = function(fn, scope) {
+        var items = this.map,
+            key,
+            length = this.length;
+
+        scope = scope || this;
+        for (key in items) {
+            if (items.hasOwnProperty(key)) {
+                if (fn.call(scope, key, items[key], length) === false) {
+                    break;
+                }
+            }
+        }
+        return this;
+    };
+
+    HashMap.prototype.clone = function() {
+        var map = new HashMap();
+        this.each(function(key, value) {
+            map.put(key,value);
+        });
+        return map;
     };
 
     
@@ -209,16 +220,22 @@
         this.nextHandler = null;
     }
 
-    MustacheEngine.prototype = {
-        constructor: MustacheEngine,
+    MustacheEngine.prototype.engine = 'mustache';
 
-        compile: function(engine, content) {
-            if (engine == 'mustache') {
-                Mustache.parse(content);
-                return content;
-            } else {
-                return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
-            }
+    MustacheEngine.prototype.compile = function(engine, content) {
+        if (engine == this.engine) {
+            Mustache.parse(content);
+            return content;
+        } else {
+            return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
+        }
+    };
+
+    MustacheEngine.prototype.render = function(engine, tpl, data) {
+        if (engine == this.engine) {
+            return Mustache.render(tpl, data);
+        } else {
+            return this.nextHandler ? this.nextHandler.render(engine, tpl, data) : false;
         }
     };
 
@@ -228,33 +245,46 @@
         this.nextHandler = null;
     }
 
-    DoTEngine.prototype = {
-        constructor: DoTEngine,
+    DoTEngine.prototype.engine = 'dot';
 
-        compile: function(engine, content) {
-            if (engine == 'dot') {
-                return doT.template(content);
-            } else {
-                return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
-            }
+    DoTEngine.prototype.compile = function(engine, content) {
+        if (engine == 'dot') {
+            return doT.template(content);
+        } else {
+            return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
+        }
+    };
+
+    DoTEngine.prototype.render = function(engine, tpl, data) {
+        if (engine == this.engine) {
+            return tpl(data);
+        } else {
+            return this.nextHandler ? this.nextHandler.render(engine, tpl, data) : false;
         }
     };
 
     
 
-    var templateEngines = {
-        mustache: new MustacheEngine(),
-        doT: new DoTEngine()
+    var templateRenderer = {
+        engines: {
+            mustache: new MustacheEngine(),
+            doT: new DoTEngine()
+        },
+        create: function(engine, content) {
+            if (engine) {
+                return this.engines.mustache.compile(engine.toLowerCase(), content);
+            }
+            return false;
+        },
+        render: function(engine, renderer, data) {
+            if (engine) {
+                return this.engines.mustache.render(engine.toLowerCase(), renderer, data);
+            }
+            return false;
+        }
     };
 
-    templateEngines.mustache.nextHandler = templateEngines.doT;
-
-    function createTemplateRenderer(engine, content) {
-        if (engine) {
-            return templateEngines.mustache.compile(engine.toLowerCase(), content);
-        }
-        return false;
-    }
+    templateRenderer.engines.mustache.nextHandler = templateRenderer.engines.doT;
 
     
 
@@ -382,17 +412,21 @@
     pole.initMock = function(configUrl, callbackFn) {
         var templateStatus = 0, // 模板文件加载状态
             templateLength = 0,
-            templateReadyTimer;
+            templateReadyTimer,
+            commentNodeType = document.COMMENT_NODE,
+            poleTags = 'Template|Fragment';
 
-        function templateReady() {
+        function templateReady(fn) {
             clearTimeout(templateReadyTimer);
             if (templateStatus === -1) {
                 return;
             } else if (templateStatus < templateLength) {
-                templateReadyTimer = setTimeout(templateReady, 50);
+                templateReadyTimer = setTimeout(function() { templateReady(fn); }, 50);
                 return;
             }
-            renderTemplate();
+            if (fn) {
+                fn();
+            }
         }
 
         function requestTemplate(name, options) {
@@ -420,12 +454,114 @@
             });
         }
 
-        function renderTemplate() {
+        function loadTemplate() {
+            var templateTags = parseTemplateTag(getAllCommentNodes(document.documentElement));
 
+            templateStatus = 0;
+            templateLength = templateTags.length;
+            templateReadyTimer = null;
 
-            if (callbackFn) {
-                callbackFn();
+            templateTags.forEach(function(tag) {
+                loadTemplateMockData(tag);
+            });
+            templateReady(callbackFn);
+        }
+
+        function loadTemplateMockData(tag) {
+            var action = pole.url(tag.params.action);
+            if (action) {
+                ajax.getJSON('GET', action, null, function(response) {
+                    if (templateStatus !== -1) {
+                        renderTemplate(tag, response);
+                        templateStatus++;
+                    }
+                }, function() {
+                    templateStatus = -1;
+                    throw '加载模板mock数据失败：' + action;
+                });
+            } else {
+                renderTemplate(tag);
             }
+        }
+
+        function renderTemplate(tag, data) {
+            var parentNode = tag.node.parentNode,
+                nextSibling = tag.node.nextSibling,
+                fragment,
+                div,
+                i = 0,
+                len,
+                childNodes;
+
+            fragment = pole.render(tag.params.name, data || {});
+            div = document.createElement('div');
+            div.innerHTML = fragment;
+
+            childNodes = div.childNodes;
+            len = childNodes.length;
+
+            for (; i < len; i++) {
+                if (nextSibling) {
+                    parentNode.insertBefore(childNodes[i], nextSibling);
+                } else {
+                    parentNode.appendChild(childNodes[i]);
+                }
+            }
+
+            parentNode.removeChild(tag.node);
+            tag.node = div = null;
+        }
+
+        function getAllCommentNodes(node) {
+            var result = [],
+                childNodes = node.childNodes,
+                i = 0,
+                len;
+
+            if (node.nodeType === commentNodeType) {
+                result.push(node);
+            } else if (childNodes) {
+                len = childNodes.length;
+                for (; i < len; i++) {
+                    result = result.concat(getAllCommentNodes(childNodes[i]));
+                }
+            }
+            return result;
+        }
+
+        function parseTemplateTag(nodes) {
+            var tags = [],
+                parser = function(node) {
+                    var ret;
+                    var content = node.data.trim();
+                    var matches = content.match(new RegExp('^(Pole(?:' + poleTags + ')Tag)\\s(.*)(?:\\/|\\/EndTag)$'));
+                    if (matches) {
+                        ret = {
+                            node: node,
+                            content: content,
+                            type: matches[1],
+                            params: parseParams(matches[2])
+                        };
+                    }
+                    return ret;
+                },
+                parseParams = (function() {
+                    var re = /(\w+)="([^=]*)"/gi;
+                    return function(str) {
+                        var result, params = {};
+                        while ((result = re.exec(str)) !== null) {
+                            params[result[1]] = result[2];
+                        }
+                        return params;
+                    };
+                }());
+            nodes.forEach(function(node) {
+                var tag = parser(node);
+                if (tag && tag.type == 'PoleTemplateTag') {
+                    tags.push(tag);
+                }
+            });
+            return tags;
         }
 
         /*
@@ -462,7 +598,7 @@
                 for (key in templates) {
                     requestTemplate(key, templates[key]);
                 }
-                templateReady();
+                templateReady(loadTemplate);
             }
         }, function() {
             throw '加载mock配置文件失败：' + configUrl;
@@ -501,11 +637,6 @@
             }
         }
     }());
-
-
-
-    pole.parser = '';
-
 
 
     if (typeof define === 'function') {
