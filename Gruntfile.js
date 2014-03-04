@@ -50,7 +50,7 @@ module.exports = function(grunt) {
                 footer: '}(window));',
                 process: convert
             },
-            mockDist: {
+            mock: {
                 src: [
                     'src/var/document.js',
                     'src/var/slice.js',
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
                 ],
                 dest: 'pole-mock.js'
             },
-            coreDist: {
+            core: {
                 src: [
                     'src/var/document.js',
                     'src/var/slice.js',
