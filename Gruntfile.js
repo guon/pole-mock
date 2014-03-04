@@ -1,6 +1,8 @@
 module.exports = function(grunt) {
     'use strict';
 
+    var distFiles = ['pole-mock.js', 'pole-core.js'];
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
@@ -9,11 +11,11 @@ module.exports = function(grunt) {
                 jshintrc: '.jshintrc'
             },
             beforeconcat: ['Gruntfile.js', 'src/**/*.js'],
-            afterconcat: ['pole-mock.js']
+            afterconcat: distFiles
         },
 
         qunit: {
-            alltests: {
+            allTests: {
                 options: {
                     timeout: 10000,
                     urls: [
@@ -36,18 +38,18 @@ module.exports = function(grunt) {
         },
 
         clean: {
-            dist: ['pole-mock.js']
+            dist: distFiles
         },
 
         concat: {
-            dist: {
-                options: {
-                    separator: '',
-                    stripBanners: true,
-                    banner: '/*! <%= pkg.name %> v<%= pkg.version %> ~ (c) 2014<%= (grunt.template.today("yyyy") != 2014 ? "-" + grunt.template.today("yyyy") : "" ) %> Max Zhang, <%= pkg.homepage %> */\n(function(window, undefined) {\n    \'use strict\';\n',
-                    footer: '}(window));',
-                    process: convert
-                },
+            options: {
+                separator: '',
+                stripBanners: true,
+                banner: '/*! <%= pkg.name %> v<%= pkg.version %> ~ (c) 2014<%= (grunt.template.today("yyyy") != 2014 ? "-" + grunt.template.today("yyyy") : "" ) %> Max Zhang, <%= pkg.homepage %> */\n(function(window, undefined) {\n    \'use strict\';\n',
+                footer: '}(window));',
+                process: convert
+            },
+            mockDist: {
                 src: [
                     'src/var/document.js',
                     'src/var/slice.js',
@@ -65,6 +67,20 @@ module.exports = function(grunt) {
                     'src/global.js'
                 ],
                 dest: 'pole-mock.js'
+            },
+            coreDist: {
+                src: [
+                    'src/var/document.js',
+                    'src/var/slice.js',
+                    'src/var/format-string.js',
+                    'src/core.js',
+                    'src/hashmap.js',
+                    'src/adapter/mustache.js',
+                    'src/adapter/dot.js',
+                    'src/template-renderer.js',
+                    'src/global.js'
+                ],
+                dest: 'pole-core.js'
             }
         },
 
