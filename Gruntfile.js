@@ -3,6 +3,8 @@ module.exports = function(grunt) {
 
     var distFiles = ['pole-mock.js', 'pole-core.js'];
 
+    require('load-grunt-tasks')(grunt);
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
@@ -15,7 +17,7 @@ module.exports = function(grunt) {
         },
 
         qunit: {
-            allTests: {
+            tests: {
                 options: {
                     timeout: 10000,
                     urls: [
@@ -91,13 +93,6 @@ module.exports = function(grunt) {
             }
         }
     });
-
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-qunit');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('default', ['jshint:beforeconcat']);
     grunt.registerTask('test', ['jshint:beforeconcat', 'connect', 'qunit']);
