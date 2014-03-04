@@ -19,7 +19,6 @@ module.exports = function(grunt) {
         qunit: {
             tests: {
                 options: {
-                    timeout: 10000,
                     urls: [
                         'http://localhost:8008/test/test_hashmap.html',
                         'http://localhost:8008/test/test_ajax.html',
