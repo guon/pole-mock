@@ -1,4 +1,4 @@
-/*! pole-mock v0.0.1 ~ (c) 2014 Max Zhang, https://github.com/polejs/pole-mock */
+/*! pole-mock v0.0.1 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
 (function(window, undefined) {
     'use strict';
 

@@ -47,7 +47,7 @@ module.exports = function(grunt) {
             options: {
                 separator: '',
                 stripBanners: true,
-                banner: '/*! <%= pkg.name %> v<%= pkg.version %> ~ (c) 2014<%= (grunt.template.today("yyyy") != 2014 ? "-" + grunt.template.today("yyyy") : "" ) %> Max Zhang, <%= pkg.homepage %> */\n(function(window, undefined) {\n    \'use strict\';\n',
+                banner: '/*! <%= pkg.name %> v<%= pkg.version %> ~ (c) 2014<%= (grunt.template.today("yyyy") != 2014 ? "-" + grunt.template.today("yyyy") : "" ) %> Pole Team, <%= pkg.homepage %> */\n(function(window, undefined) {\n    \'use strict\';\n',
                 footer: '}(window));',
                 process: convert
             },
