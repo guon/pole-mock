@@ -6,10 +6,9 @@
     
     var slice = Array.prototype.slice;
     
-    var formatRe = /\{(\d+)\}/g;
     var formatString = function(str) {
         var args = slice.call(arguments, 1);
-        return str.replace(formatRe, function(m, i) {
+        return str.replace(/\{(\d+)\}/g, function(m, i) {
             return args[i];
         });
     };
@@ -215,21 +214,25 @@
 
     MustacheEngine.prototype.engine = 'mustache';
 
-    MustacheEngine.prototype.compile = function(engine, content) {
-        if (engine == this.engine) {
-            Mustache.parse(content);
-            return content;
+    MustacheEngine.prototype.handleRequest = function(method, args, fn) {
+        if (args[0] == this.engine) {
+            return fn.apply(this, args);
         } else {
-            return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
+            return this.nextHandler ? this.nextHandler[method].apply(this.nextHandler, args) : false;
         }
     };
 
-    MustacheEngine.prototype.render = function(engine, tpl, data) {
-        if (engine == this.engine) {
+    MustacheEngine.prototype.compile = function() {
+        return this.handleRequest('compile', slice.call(arguments, 0), function(engine, content) {
+            Mustache.parse(content);
+            return content;
+        });
+    };
+
+    MustacheEngine.prototype.render = function() {
+        return this.handleRequest('render', slice.call(arguments, 0), function(engine, tpl, data) {
             return Mustache.render(tpl, data);
-        } else {
-            return this.nextHandler ? this.nextHandler.render(engine, tpl, data) : false;
-        }
+        });
     };
 
     
@@ -240,20 +243,18 @@
 
     DoTEngine.prototype.engine = 'dot';
 
-    DoTEngine.prototype.compile = function(engine, content) {
-        if (engine == 'dot') {
+    DoTEngine.prototype.handleRequest = MustacheEngine.prototype.handleRequest;
+
+    DoTEngine.prototype.compile = function() {
+        return this.handleRequest('compile', slice.call(arguments, 0), function(engine, content) {
             return doT.template(content);
-        } else {
-            return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
-        }
+        });
     };
 
-    DoTEngine.prototype.render = function(engine, tpl, data) {
-        if (engine == this.engine) {
+    DoTEngine.prototype.render = function() {
+        return this.handleRequest('render', slice.call(arguments, 0), function(engine, tpl, data) {
             return tpl(data);
-        } else {
-            return this.nextHandler ? this.nextHandler.render(engine, tpl, data) : false;
-        }
+        });
     };
 
     
@@ -263,17 +264,22 @@
             mustache: new MustacheEngine(),
             doT: new DoTEngine()
         },
-        create: function(engine, content) {
-            if (engine) {
-                return this.engines.mustache.compile(engine.toLowerCase(), content);
+
+        handle: function(method, args) {
+            var handler = this.engines.mustache;
+            if (args && args[0]) {
+                args[0] = args[0].toLowerCase();
+                return handler[method].apply(handler, args);
             }
             return false;
         },
+
+        create: function(engine, content) {
+            return this.handle('compile', slice.call(arguments, 0));
+        },
+
         render: function(engine, renderer, data) {
-            if (engine) {
-                return this.engines.mustache.render(engine.toLowerCase(), renderer, data);
-            }
-            return false;
+            return this.handle('render', slice.call(arguments, 0));
         }
     };
 
@@ -282,7 +288,7 @@
     
 
     if (typeof define === 'function') {
-        define('pole', ['mustache'], function() { return pole; });
+        define('pole', [], function() { return pole; });
     }
 
     if (typeof window === 'object' && typeof document === 'object') {

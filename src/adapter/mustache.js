@@ -1,4 +1,7 @@
-define(['mustache'], function(Mustache) {
+define([
+    'mustache',
+    'var/slice'
+], function(Mustache, slice) {
     'use strict';
 
     function MustacheEngine() {
@@ -7,21 +10,25 @@ define(['mustache'], function(Mustache) {
 
     MustacheEngine.prototype.engine = 'mustache';
 
-    MustacheEngine.prototype.compile = function(engine, content) {
-        if (engine == this.engine) {
-            Mustache.parse(content);
-            return content;
+    MustacheEngine.prototype.handleRequest = function(method, args, fn) {
+        if (args[0] == this.engine) {
+            return fn.apply(this, args);
         } else {
-            return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
+            return this.nextHandler ? this.nextHandler[method].apply(this.nextHandler, args) : false;
         }
     };
 
-    MustacheEngine.prototype.render = function(engine, tpl, data) {
-        if (engine == this.engine) {
+    MustacheEngine.prototype.compile = function() {
+        return this.handleRequest('compile', slice.call(arguments, 0), function(engine, content) {
+            Mustache.parse(content);
+            return content;
+        });
+    };
+
+    MustacheEngine.prototype.render = function() {
+        return this.handleRequest('render', slice.call(arguments, 0), function(engine, tpl, data) {
             return Mustache.render(tpl, data);
-        } else {
-            return this.nextHandler ? this.nextHandler.render(engine, tpl, data) : false;
-        }
+        });
     };
 
     return MustacheEngine;

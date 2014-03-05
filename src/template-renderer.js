@@ -1,24 +1,30 @@
 define([
     'adapter/mustache',
-    'adapter/dot'
-], function(MustacheEngine, DoTEngine) {
+    'adapter/dot',
+    'var/slice'
+], function(MustacheEngine, DoTEngine, slice) {
 
     var templateRenderer = {
         engines: {
             mustache: new MustacheEngine(),
             doT: new DoTEngine()
         },
-        create: function(engine, content) {
-            if (engine) {
-                return this.engines.mustache.compile(engine.toLowerCase(), content);
+
+        handle: function(method, args) {
+            var handler = this.engines.mustache;
+            if (args && args[0]) {
+                args[0] = args[0].toLowerCase();
+                return handler[method].apply(handler, args);
             }
             return false;
         },
+
+        create: function(engine, content) {
+            return this.handle('compile', slice.call(arguments, 0));
+        },
+
         render: function(engine, renderer, data) {
-            if (engine) {
-                return this.engines.mustache.render(engine.toLowerCase(), renderer, data);
-            }
-            return false;
+            return this.handle('render', slice.call(arguments, 0));
         }
     };
 

@@ -1,19 +1,18 @@
 define([
     'core',
     'ajax',
+    'tag-parser',
     'var/document',
     'var/suffix'
-], function(pole, ajax, document, suffix) {
+], function(pole, ajax, tagParser, document, suffix) {
     'use strict';
 
     pole.initMock = function(configUrl, callbackFn) {
         var templateStatus = 0, // 模板文件加载状态
             templateLength = 0,
-            templateReadyTimer,
-            commentNodeType = document.COMMENT_NODE,
-            poleTags = 'Template|Fragment';
+            templateReadyTimer;
 
-        function templateReady(fn) {
+        var templateReady = function(fn) {
             clearTimeout(templateReadyTimer);
             if (templateStatus === -1) {
                 return;
@@ -24,9 +23,9 @@ define([
             if (fn) {
                 fn();
             }
-        }
+        };
 
-        function requestTemplate(name, options) {
+        var requestTemplate = function(name, options) {
             var url, engine;
             if (typeof options === 'string') {
                 url = options;
@@ -49,10 +48,10 @@ define([
             }, {
                 'Content-Type': 'text/plain'
             });
-        }
+        };
 
-        function loadTemplate() {
-            var templateTags = parseTemplateTag(getAllCommentNodes(document.documentElement));
+        var loadTemplate = function() {
+            var templateTags = tagParser.getChildTags('template', document.documentElement);
 
             templateStatus = 0;
             templateLength = templateTags.length;
@@ -62,9 +61,9 @@ define([
                 loadTemplateMockData(tag);
             });
             templateReady(callbackFn);
-        }
+        };
 
-        function loadTemplateMockData(tag) {
+        var loadTemplateMockData = function(tag) {
             var action = pole.url(tag.params.action);
             if (action) {
                 ajax.getJSON('GET', action, null, function(response) {
@@ -79,9 +78,9 @@ define([
             } else {
                 renderTemplate(tag);
             }
-        }
+        };
 
-        function renderTemplate(tag, data) {
+        var renderTemplate = function(tag, data) {
             var parentNode = tag.node.parentNode,
                 nextSibling = tag.node.nextSibling,
                 fragment,
@@ -107,59 +106,7 @@ define([
 
             parentNode.removeChild(tag.node);
             tag.node = div = null;
-        }
-
-        function getAllCommentNodes(node) {
-            var result = [],
-                childNodes = node.childNodes,
-                i = 0,
-                len;
-
-            if (node.nodeType === commentNodeType) {
-                result.push(node);
-            } else if (childNodes) {
-                len = childNodes.length;
-                for (; i < len; i++) {
-                    result = result.concat(getAllCommentNodes(childNodes[i]));
-                }
-            }
-            return result;
-        }
-
-        function parseTemplateTag(nodes) {
-            var tags = [],
-                parser = function(node) {
-                    var ret;
-                    var content = node.data.trim();
-                    var matches = content.match(new RegExp('^(Pole(?:' + poleTags + ')Tag)\\s(.*)(?:\\/|\\/EndTag)$'));
-                    if (matches) {
-                        ret = {
-                            node: node,
-                            content: content,
-                            type: matches[1],
-                            params: parseParams(matches[2])
-                        };
-                    }
-                    return ret;
-                },
-                parseParams = (function() {
-                    var re = /(\w+)="([^=]*)"/gi;
-                    return function(str) {
-                        var result, params = {};
-                        while ((result = re.exec(str)) !== null) {
-                            params[result[1]] = result[2];
-                        }
-                        return params;
-                    };
-                }());
-            nodes.forEach(function(node) {
-                var tag = parser(node);
-                if (tag && tag.type == 'PoleTemplateTag') {
-                    tags.push(tag);
-                }
-            });
-            return tags;
-        }
+        };
 
         /*
          * pole-mock-config格式：

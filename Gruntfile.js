@@ -20,10 +20,11 @@ module.exports = function(grunt) {
             tests: {
                 options: {
                     urls: [
-                        'http://localhost:8008/test/test_hashmap.html',
-                        'http://localhost:8008/test/test_ajax.html',
-                        'http://localhost:8008/test/test_pole.html',
-                        'http://localhost:8008/test/test_mock.html'
+                        'http://localhost:8018/test/test_hashmap.html',
+                        'http://localhost:8018/test/test_ajax.html',
+                        'http://localhost:8018/test/test_pole.html',
+                        'http://localhost:8018/test/test_parser.html',
+                        'http://localhost:8018/test/test_mock.html'
                     ]
                 }
             }
@@ -32,7 +33,7 @@ module.exports = function(grunt) {
         connect: {
             server: {
                 options: {
-                    port: 8008,
+                    port: 8018,
                     base: './'
                 }
             }
@@ -63,6 +64,7 @@ module.exports = function(grunt) {
                     'src/adapter/dot.js',
                     'src/template-renderer.js',
                     'src/ajax.js',
+                    'src/tag-parser.js',
                     'src/mock.js',
                     'src/global.js'
                 ],

@@ -1,4 +1,8 @@
-define(['dot'], function(doT) {
+define([
+    'dot',
+    'adapter/mustache',
+    'var/slice'
+], function(doT, MustacheEngine, slice) {
     'use strict';
 
     function DoTEngine() {
@@ -7,20 +11,18 @@ define(['dot'], function(doT) {
 
     DoTEngine.prototype.engine = 'dot';
 
-    DoTEngine.prototype.compile = function(engine, content) {
-        if (engine == 'dot') {
+    DoTEngine.prototype.handleRequest = MustacheEngine.prototype.handleRequest;
+
+    DoTEngine.prototype.compile = function() {
+        return this.handleRequest('compile', slice.call(arguments, 0), function(engine, content) {
             return doT.template(content);
-        } else {
-            return this.nextHandler ? this.nextHandler.compile(engine, content) : false;
-        }
+        });
     };
 
-    DoTEngine.prototype.render = function(engine, tpl, data) {
-        if (engine == this.engine) {
+    DoTEngine.prototype.render = function() {
+        return this.handleRequest('render', slice.call(arguments, 0), function(engine, tpl, data) {
             return tpl(data);
-        } else {
-            return this.nextHandler ? this.nextHandler.render(engine, tpl, data) : false;
-        }
+        });
     };
 
     return DoTEngine;
