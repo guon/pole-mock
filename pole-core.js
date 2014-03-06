@@ -215,7 +215,7 @@
     MustacheEngine.prototype.engine = 'mustache';
 
     MustacheEngine.prototype.handleRequest = function(method, args, fn) {
-        if (args[0] == this.engine) {
+        if (args[0] === this.engine) {
             return fn.apply(this, args);
         } else {
             return this.nextHandler ? this.nextHandler[method].apply(this.nextHandler, args) : false;

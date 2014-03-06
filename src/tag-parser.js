@@ -55,7 +55,7 @@ define(['var/document'], function(document) {
             type = 'pole' + (type || 'template').toLowerCase() + 'tag';
             nodes.forEach(function(node) {
                 var tag = parseTag(node);
-                if (tag && tag.type.toLowerCase() == type) {
+                if (tag && tag.type.toLowerCase() === type) {
                     tags.push(tag);
                 }
             });
