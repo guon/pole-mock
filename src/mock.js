@@ -7,6 +7,8 @@ define([
 ], function(pole, ajax, tagParser, document, suffix) {
     'use strict';
 
+    pole.mockMode = true;
+
     pole.initMock = function(configUrl, callbackFn) {
         var templateStatus = 0, // 模板文件加载状态
             templateLength = 0,
@@ -125,14 +127,19 @@ define([
             var engine = response.templateEngine,
                 actions = response.actions,
                 templates = response.templates,
-                key;
+                key,
+                url;
 
             if (engine) {
                 pole.defaultTemplateEngine = engine;
             }
             if (actions) {
                 for (key in actions) {
-                    pole.putActions(key, suffix(actions[key], 'json'));
+                    url = actions[key];
+                    if (typeof url === 'object') {
+                        url = url.mock;
+                    }
+                    pole.putActions(key, suffix(url, 'json'));
                 }
             }
             if (templates) {
@@ -148,37 +155,4 @@ define([
             throw '加载mock配置文件失败：' + configUrl;
         });
     };
-
-    (function() {
-        var scripts = document.getElementsByTagName('script'),
-            mockScriptNode,
-            configUrl,
-            mainScriptSrc,
-            mainScriptNode;
-
-        if (scripts) {
-            for (var i = 0, len = scripts.length; i < len; i++) {
-                if (/pole\-mock\.js$/.test(scripts[i].src)) {
-                    mockScriptNode = scripts[i];
-                    configUrl = mockScriptNode.getAttribute('data-config');
-                    mainScriptSrc = mockScriptNode.getAttribute('data-main');
-                    break;
-                }
-            }
-            if (configUrl) {
-                pole.initMock(configUrl, function() {
-                    if (mainScriptSrc) {
-                        mainScriptNode = document.createElement('script');
-                        mainScriptNode.src = suffix(mainScriptSrc, 'js');
-                        mainScriptNode.type = 'text/javascript';
-                        if (mockScriptNode.nextSibling) {
-                            mockScriptNode.parentNode.insertBefore(mainScriptNode, mockScriptNode.nextSibling);
-                        } else {
-                            mockScriptNode.parentNode.appendChild(mainScriptNode);
-                        }
-                    }
-                });
-            }
-        }
-    }());
 });

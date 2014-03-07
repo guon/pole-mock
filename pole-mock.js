@@ -490,6 +490,8 @@
 
     
 
+    pole.mockMode = true;
+
     pole.initMock = function(configUrl, callbackFn) {
         var templateStatus = 0, // 模板文件加载状态
             templateLength = 0,
@@ -608,14 +610,19 @@
             var engine = response.templateEngine,
                 actions = response.actions,
                 templates = response.templates,
-                key;
+                key,
+                url;
 
             if (engine) {
                 pole.defaultTemplateEngine = engine;
             }
             if (actions) {
                 for (key in actions) {
-                    pole.putActions(key, suffix(actions[key], 'json'));
+                    url = actions[key];
+                    if (typeof url === 'object') {
+                        url = url.mock;
+                    }
+                    pole.putActions(key, suffix(url, 'json'));
                 }
             }
             if (templates) {
@@ -632,12 +639,26 @@
         });
     };
 
+
     (function() {
         var scripts = document.getElementsByTagName('script'),
             mockScriptNode,
             configUrl,
             mainScriptSrc,
             mainScriptNode;
+
+        var mainInit = function() {
+            if (mainScriptSrc) {
+                mainScriptNode = document.createElement('script');
+                mainScriptNode.src = suffix(mainScriptSrc, 'js');
+                mainScriptNode.type = 'text/javascript';
+                if (mockScriptNode.nextSibling) {
+                    mockScriptNode.parentNode.insertBefore(mainScriptNode, mockScriptNode.nextSibling);
+                } else {
+                    mockScriptNode.parentNode.appendChild(mainScriptNode);
+                }
+            }
+        };
 
         if (scripts) {
             for (var i = 0, len = scripts.length; i < len; i++) {
@@ -648,19 +669,10 @@
                     break;
                 }
             }
-            if (configUrl) {
-                pole.initMock(configUrl, function() {
-                    if (mainScriptSrc) {
-                        mainScriptNode = document.createElement('script');
-                        mainScriptNode.src = suffix(mainScriptSrc, 'js');
-                        mainScriptNode.type = 'text/javascript';
-                        if (mockScriptNode.nextSibling) {
-                            mockScriptNode.parentNode.insertBefore(mainScriptNode, mockScriptNode.nextSibling);
-                        } else {
-                            mockScriptNode.parentNode.appendChild(mainScriptNode);
-                        }
-                    }
-                });
+            if (pole.mockMode === true && configUrl) {
+                pole.initMock(configUrl, mainInit);
+            } else {
+                mainInit();
             }
         }
     }());
