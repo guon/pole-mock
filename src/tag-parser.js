@@ -3,7 +3,6 @@ define(['var/document'], function(document) {
 
     var tagParser = (function() {
         var commentNodeType = document.COMMENT_NODE,
-            POLE_TAGS = 'Template|Fragment',
             paramsRe = /(\w+)="([^=]*)"/gi;
 
         var filterCommentNodes = function(node) {
@@ -26,7 +25,7 @@ define(['var/document'], function(document) {
         var parseTag = function(node) {
             var ret;
             var content = node.data.trim();
-            var matches = content.match(new RegExp('^(Pole(?:' + POLE_TAGS + ')Tag)\\s(.*)(?:\\/|\\/EndTag)$'));
+            var matches = content.match(/^(Pole(?:Template|Fragment)Tag)\s([^\-<>]*)(?:\/|\/EndTag)$/);
             if (matches) {
                 ret = {
                     node: node,
