@@ -4,7 +4,8 @@
     "version": "0.0.1",
     "homepage": "https://github.com/polejs/pole-mock",
     "author": {
-        "name": "maxzhang <zhangdaiping@gmail.com>",
+        "name": "Max Zhang",
+        "email": "zhangdaiping@gmail.com",
         "url": "https://github.com/maxzhang"
     },
     "repository": {
