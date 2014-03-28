@@ -1,7 +1,7 @@
 requirejs.config({
     baseUrl: '../src',
     paths: {
-        mustache: '../bower_components/mustache/mustache',
-        dot: '../bower_components/doT/doT'
+        mustache: '../node_modules/mustache/mustache',
+        dot: '../node_modules/doT/doT'
     }
 });

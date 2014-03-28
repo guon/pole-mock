@@ -16,9 +16,7 @@
         "pole",
         "pole-mock"
     ],
-    "dependencies": {
-        "mustache": "0.8.1"
-    },
+    "dependencies": {},
     "devDependencies": {
         "qunit": "1.14.0",
         "requirejs": "2.1.11",

@@ -34,6 +34,10 @@
         "grunt-contrib-qunit": "~0.4.0",
         "grunt-contrib-concat": "~0.3.0",
         "grunt-contrib-watch": "~0.5.3",
-        "load-grunt-tasks": "~0.4.0"
+        "load-grunt-tasks": "~0.4.0",
+        "qunitjs": "~1.14.0",
+        "requirejs": "~2.1.11",
+        "mustache": "~0.8.1",
+        "dot": "~1.0.2"
     }
 }

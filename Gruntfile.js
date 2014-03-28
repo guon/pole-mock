@@ -1,7 +1,8 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var distFiles = ['pole-mock.js', 'pole-core.js'];
+    var distFiles = ['pole-mock.js', 'pole-core.js'],
+        testServerHost = 'http://localhost:8118';
 
     require('load-grunt-tasks')(grunt);
 
@@ -20,11 +21,11 @@ module.exports = function(grunt) {
             tests: {
                 options: {
                     urls: [
-                        'http://localhost:8008/test/test_hashmap.html',
-                        'http://localhost:8008/test/test_ajax.html',
-                        'http://localhost:8008/test/test_pole.html',
-                        'http://localhost:8008/test/test_parser.html',
-                        'http://localhost:8008/test/test_mock.html'
+                        testServerHost + '/test/test_hashmap.html',
+                        testServerHost + '/test/test_ajax.html',
+                        testServerHost + '/test/test_pole.html',
+                        testServerHost + '/test/test_parser.html',
+                        testServerHost + '/test/test_mock.html'
                     ]
                 }
             }
@@ -33,7 +34,7 @@ module.exports = function(grunt) {
         connect: {
             server: {
                 options: {
-                    port: 8008,
+                    port: 8118,
                     base: './'
                 }
             }
