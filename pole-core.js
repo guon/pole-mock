@@ -1,4 +1,4 @@
-/*! pole-mock v0.0.1 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
+/*! pole-mock v0.0.4 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
 (function(window, undefined) {
     'use strict';
 
@@ -16,7 +16,7 @@
 
     var pole = {
         // the version of pole-mock
-        version: '0.0.1',
+        version: '0.0.4',
 
         // 默认模板引擎
         defaultTemplateEngine: 'mustache'
@@ -237,21 +237,43 @@
 
     
 
-    function DoTEngine() {
+    function ArtTemplateEngine() {
         this.nextHandler = null;
     }
 
-    DoTEngine.prototype.engine = 'dot';
+    ArtTemplateEngine.prototype.engine = 'arttemplate';
 
-    DoTEngine.prototype.handleRequest = MustacheEngine.prototype.handleRequest;
+    ArtTemplateEngine.prototype.handleRequest = MustacheEngine.prototype.handleRequest;
 
-    DoTEngine.prototype.compile = function() {
+    ArtTemplateEngine.prototype.compile = function() {
         return this.handleRequest('compile', slice.call(arguments, 0), function(engine, content) {
-            return doT.template(content);
+            return artTemplate.compile(content);
         });
     };
 
-    DoTEngine.prototype.render = function() {
+    ArtTemplateEngine.prototype.render = function() {
+        return this.handleRequest('render', slice.call(arguments, 0), function(engine, tpl, data) {
+            return tpl(data);
+        });
+    };
+
+    
+
+    function UnderscoreEngine() {
+        this.nextHandler = null;
+    }
+
+    UnderscoreEngine.prototype.engine = 'underscore';
+
+    UnderscoreEngine.prototype.handleRequest = MustacheEngine.prototype.handleRequest;
+
+    UnderscoreEngine.prototype.compile = function() {
+        return this.handleRequest('compile', slice.call(arguments, 0), function(engine, content) {
+            return _.template(content);
+        });
+    };
+
+    UnderscoreEngine.prototype.render = function() {
         return this.handleRequest('render', slice.call(arguments, 0), function(engine, tpl, data) {
             return tpl(data);
         });
@@ -262,7 +284,8 @@
     var templateRenderer = {
         engines: {
             mustache: new MustacheEngine(),
-            doT: new DoTEngine()
+            artTemplate: new ArtTemplateEngine(),
+            underscore: new UnderscoreEngine()
         },
 
         handle: function(method, args) {
@@ -283,7 +306,8 @@
         }
     };
 
-    templateRenderer.engines.mustache.nextHandler = templateRenderer.engines.doT;
+    templateRenderer.engines.mustache.nextHandler = templateRenderer.engines.artTemplate;
+    templateRenderer.engines.artTemplate.nextHandler = templateRenderer.engines.underscore;
 
     
 

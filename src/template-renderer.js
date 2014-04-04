@@ -1,13 +1,15 @@
 define([
     'adapter/mustache',
-    'adapter/dot',
+    'adapter/arttemplate',
+    'adapter/underscore',
     'var/slice'
-], function(MustacheEngine, DoTEngine, slice) {
+], function(MustacheEngine, ArtTemplateEngine, UnderscoreEngine, slice) {
 
     var templateRenderer = {
         engines: {
             mustache: new MustacheEngine(),
-            doT: new DoTEngine()
+            artTemplate: new ArtTemplateEngine(),
+            underscore: new UnderscoreEngine()
         },
 
         handle: function(method, args) {
@@ -28,7 +30,8 @@ define([
         }
     };
 
-    templateRenderer.engines.mustache.nextHandler = templateRenderer.engines.doT;
+    templateRenderer.engines.mustache.nextHandler = templateRenderer.engines.artTemplate;
+    templateRenderer.engines.artTemplate.nextHandler = templateRenderer.engines.underscore;
 
     return templateRenderer;
 });

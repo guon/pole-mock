@@ -26,8 +26,8 @@ define(['core', 'mustache'], function(pole, Mustache) {
             equal(pole.tpl('main1'), '<h1>{{message1}}</h1>', '添加多个模板');
             equal(pole.tpl('main2'), '<h1>{{message2}}</h1>', '添加多个模板');
 
-            pole.defaultTemplateEngine = 'doT';
-            pole.putTemplates('main3', '<h1>{{=it.message}}</h1>');
+            pole.defaultTemplateEngine = 'artTemplate';
+            pole.putTemplates('main3', '<h1><%= message %></h1>');
             equal(pole.tpl('main3')({ message: 'Hello World!'}), '<h1>Hello World!</h1>', '自定义默认模板引擎');
         });
     };

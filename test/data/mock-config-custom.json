@@ -1,5 +1,5 @@
 {
-    "templateEngine": "doT",
+    "templateEngine": "artTemplate",
     "actions": {
         "main": "data/mock-data"
     },
@@ -8,6 +8,6 @@
             "url": "data/template-mustache",
             "engine": "mustache"
         },
-        "templateDoT": "data/template-doT"
+        "templateArtTmpl": "data/template-artTemplate"
     }
 }

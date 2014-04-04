@@ -2,6 +2,7 @@ requirejs.config({
     baseUrl: '../src',
     paths: {
         mustache: '../node_modules/mustache/mustache',
-        dot: '../node_modules/doT/doT'
+        artTemplate: '../node_modules/art-template/src/template',
+        underscore: '../node_modules/underscore/underscore'
     }
 });
