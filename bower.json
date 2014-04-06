@@ -20,7 +20,6 @@
     "devDependencies": {
         "qunit": "1.14.0",
         "requirejs": "2.1.11",
-        "mustache": "0.8.1",
-        "doT": "1.0.1"
+        "mustache": "0.8.1"
     }
 }
