@@ -99,7 +99,11 @@ define([
 
             successFn = successFn || noop;
             var successFnProxy = function(response) {
-                successFn(JSON.parse(response));
+                try {
+                    successFn(JSON.parse(response));
+                } catch (e) {
+                    throw e;
+                }
             };
 
             headers = headers || {};
