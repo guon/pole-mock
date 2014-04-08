@@ -1,4 +1,4 @@
-/*! pole-mock v0.0.8 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
+/*! pole-mock v0.0.10 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
 (function(window, undefined) {
     'use strict';
 
@@ -23,7 +23,7 @@
 
     var pole = {
         // the version of pole-mock
-        version: '0.0.8',
+        version: '0.0.10',
 
         // 默认模板引擎
         defaultTemplateEngine: 'mustache'
@@ -625,8 +625,7 @@
                 nextSibling = tag.node.nextSibling,
                 fragment,
                 div,
-                childNodes,
-                childNode;
+                childNodes;
 
             fragment = pole.render(tag.params.name, data || {});
             div = document.createElement('div');
@@ -634,12 +633,11 @@
 
             childNodes = div.childNodes;
 
-            while (childNodes.length > 0) {
-                childNode = Array.prototype.unshift.call(childNodes);
+            while (childNodes && childNodes.length > 0) {
                 if (nextSibling) {
-                    parentNode.insertBefore(childNode, nextSibling);
+                    parentNode.insertBefore(childNodes[0], nextSibling);
                 } else {
-                    parentNode.appendChild(childNode);
+                    parentNode.appendChild(childNodes[0]);
                 }
             }
 

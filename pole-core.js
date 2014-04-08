@@ -1,4 +1,4 @@
-/*! pole-mock v0.0.8 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
+/*! pole-mock v0.0.10 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
 (function(window, undefined) {
     'use strict';
 
@@ -16,7 +16,7 @@
 
     var pole = {
         // the version of pole-mock
-        version: '0.0.8',
+        version: '0.0.10',
 
         // 默认模板引擎
         defaultTemplateEngine: 'mustache'

@@ -3,7 +3,7 @@ define([
     'ajax',
     'tag-parser',
     'var/document',
-    'var/suffix',
+    'var/suffix'
 ], function(pole, ajax, tagParser, document, suffix) {
     'use strict';
 
@@ -95,8 +95,7 @@ define([
                 nextSibling = tag.node.nextSibling,
                 fragment,
                 div,
-                childNodes,
-                childNode;
+                childNodes;
 
             fragment = pole.render(tag.params.name, data || {});
             div = document.createElement('div');
@@ -104,12 +103,11 @@ define([
 
             childNodes = div.childNodes;
 
-            while (childNodes.length > 0) {
-                childNode = Array.prototype.unshift.call(childNodes);
+            while (childNodes && childNodes.length > 0) {
                 if (nextSibling) {
-                    parentNode.insertBefore(childNode, nextSibling);
+                    parentNode.insertBefore(childNodes[0], nextSibling);
                 } else {
-                    parentNode.appendChild(childNode);
+                    parentNode.appendChild(childNodes[0]);
                 }
             }
 
