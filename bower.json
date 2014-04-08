@@ -1,6 +1,6 @@
 {
     "name": "pole-mock",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "homepage": "https://github.com/polejs/pole-mock",
     "main": "pole-mock.js",
     "license": "MIT",

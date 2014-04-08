@@ -1,4 +1,4 @@
-/*! pole-mock v0.0.10 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
+/*! pole-mock v0.0.11 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
 (function(window, undefined) {
     'use strict';
 
@@ -23,7 +23,7 @@
 
     var pole = {
         // the version of pole-mock
-        version: '0.0.10',
+        version: '0.0.11',
 
         // 默认模板引擎
         defaultTemplateEngine: 'mustache'
@@ -620,29 +620,59 @@
             }
         };
 
+        var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,
+            rtagName = /<([\w:]+)/,
+            wrapMap = {
+                // Support: IE 9
+                option: [1, '<select multiple="multiple">', '</select>'],
+                thead: [1, '<table>', '</table>' ],
+                col: [2, '<table><colgroup>', '</colgroup></table>'],
+                tr: [2, '<table><tbody>', '</tbody></table>'],
+                td: [3, '<table><tbody><tr>', '</tr></tbody></table>'],
+                _default: [0, '', '']
+            };
+
+        // Support: IE 9
+        wrapMap.optgroup = wrapMap.option;
+        wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
+        wrapMap.th = wrapMap.td;
+
         var renderTemplate = function(tag, data) {
             var parentNode = tag.node.parentNode,
                 nextSibling = tag.node.nextSibling,
+                html,
                 fragment,
-                div,
-                childNodes;
+                tagName,
+                wrap,
+                tmp,
+                i,
+                nodes;
 
-            fragment = pole.render(tag.params.name, data || {});
-            div = document.createElement('div');
-            div.innerHTML = fragment;
+            html = pole.render(tag.params.name, data || {});
 
-            childNodes = div.childNodes;
+            fragment = document.createDocumentFragment();
+            tmp = fragment.appendChild(document.createElement("div"));
+            tagName = (rtagName.exec(html) || ['', ''])[1].toLowerCase();
+            wrap = wrapMap[tagName] || wrapMap._default;
+            tmp.innerHTML = wrap[1] + html.replace(rxhtmlTag, '<$1></$2>') + wrap[2];
 
-            while (childNodes && childNodes.length > 0) {
+            // Descend through wrappers to the right content
+            i = wrap[0];
+            while (i--) {
+                tmp = tmp.lastChild;
+            }
+            nodes = slice.call(tmp.childNodes, 0);
+
+            while (nodes.length > 0) {
                 if (nextSibling) {
-                    parentNode.insertBefore(childNodes[0], nextSibling);
+                    parentNode.insertBefore(nodes.shift(), nextSibling);
                 } else {
-                    parentNode.appendChild(childNodes[0]);
+                    parentNode.appendChild(nodes.shift());
                 }
             }
 
             parentNode.removeChild(tag.node);
-            tag.node = div = null;
+            tag.node = fragment = null;
         };
 
         /*
