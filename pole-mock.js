@@ -1,4 +1,4 @@
-/*! pole-mock v0.0.4 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
+/*! pole-mock v0.0.6 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
 (function(window, undefined) {
     'use strict';
 
@@ -23,7 +23,7 @@
 
     var pole = {
         // the version of pole-mock
-        version: '0.0.4',
+        version: '0.0.6',
 
         // 默认模板引擎
         defaultTemplateEngine: 'mustache'
@@ -541,7 +541,7 @@
                 url = options.url;
                 engine = options.engine;
             }
-            url = suffix(url, 'tpl');
+            url = /\.tmpl$/i.test(url) ? url : suffix(url, 'tpl');
             ajax.send('GET', url, null, function(response) {
                 if (templateStatus !== -1) {
                     pole.putTemplates(name, {
@@ -572,7 +572,7 @@
         };
 
         var loadTemplateMockData = function(tag) {
-            var action = pole.url(tag.params.action);
+            var action = pole.url.apply(pole, [tag.params.action].concat(tag.params.actionArgs ? tag.params.actionArgs.split(',') : []));
             if (action) {
                 ajax.getJSON('GET', action, null, function(response) {
                     if (templateStatus !== -1) {
@@ -645,7 +645,7 @@
                     if (typeof url === 'object') {
                         url = url.mock;
                     }
-                    pole.putActions(key, suffix(url, 'json'));
+                    pole.putActions(key, /\.jsonp$/i.test(url) ? url : suffix(url, 'json'));
                 }
             }
             if (templates) {
