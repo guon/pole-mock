@@ -14,8 +14,7 @@ define([
         var templateStatus = 0, // 模板文件加载状态
             templateLength = 0,
             templateReadyTimer,
-            jsonpRe = /\.js$/i,
-            tmplRe = /\.tmpl$/i;
+            jsonpRe = /\.js$/i;
 
         var templateReady = function(fn) {
             clearTimeout(templateReadyTimer);
@@ -38,7 +37,7 @@ define([
                 url = options.url;
                 engine = options.engine;
             }
-            url = tmplRe.test(url) ? url : suffix(url, 'tpl');
+            url = suffix(url, 'tpl', '(tpl|tmpl)');
             ajax.send('GET', url, null, function(response) {
                 if (templateStatus !== -1) {
                     pole.putTemplates(name, {
@@ -177,7 +176,7 @@ define([
                     if (typeof url === 'object') {
                         url = url.mock;
                     }
-                    pole.putActions(key, jsonpRe.test(url) ? url : suffix(url, 'json'));
+                    pole.putActions(key, suffix(url, 'json', '(json|js)'));
                 }
             }
             if (templates) {
