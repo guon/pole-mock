@@ -35,7 +35,7 @@ define([
                 url = options.url;
                 engine = options.engine;
             }
-            url = suffix(url, 'tpl');
+            url = /\.tmpl$/i.test(url) ? url : suffix(url, 'tpl');
             ajax.send('GET', url, null, function(response) {
                 if (templateStatus !== -1) {
                     pole.putTemplates(name, {
@@ -139,7 +139,7 @@ define([
                     if (typeof url === 'object') {
                         url = url.mock;
                     }
-                    pole.putActions(key, suffix(url, 'json'));
+                    pole.putActions(key, /\.jsonp$/i.test(url) ? url : suffix(url, 'json'));
                 }
             }
             if (templates) {
