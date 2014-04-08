@@ -1,4 +1,4 @@
-/*! pole-mock v0.0.6 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
+/*! pole-mock v0.0.8 ~ (c) 2014 Pole Team, https://github.com/polejs/pole-mock */
 (function(window, undefined) {
     'use strict';
 
@@ -23,7 +23,7 @@
 
     var pole = {
         // the version of pole-mock
-        version: '0.0.6',
+        version: '0.0.8',
 
         // 默认模板引擎
         defaultTemplateEngine: 'mustache'
@@ -431,9 +431,33 @@
             xhr = null;
         }
 
+        function getScript(url, successFn, failFn) {
+            var script = document.createElement('script'),
+                cb = function() {
+                    document.head.removeChild(script);
+                    script = null;
+                };
+
+            successFn = successFn || noop;
+            failFn = failFn || noop;
+
+            script.type = 'text/javascript';
+            script.src = url;
+            script.addEventListener('load', function() {
+                cb();
+                successFn();
+            });
+            script.addEventListener('error', function() {
+                cb();
+                failFn();
+            });
+            document.head.appendChild(script);
+        }
+
         return {
             send: send,
-            getJSON: getJSON
+            getJSON: getJSON,
+            getScript: getScript
         };
     }());
 
@@ -573,16 +597,24 @@
 
         var loadTemplateMockData = function(tag) {
             var action = pole.url.apply(pole, [tag.params.action].concat(tag.params.actionArgs ? tag.params.actionArgs.split(',') : []));
-            if (action) {
-                ajax.getJSON('GET', action, null, function(response) {
+
+            var loadTemplateMockDataSuccess = function(response) {
                     if (templateStatus !== -1) {
                         renderTemplate(tag, response);
                         templateStatus++;
                     }
-                }, function() {
+                },
+                loadTemplateMockDataFailed = function() {
                     templateStatus = -1;
                     throw '加载模板mock数据失败：' + action;
-                });
+                };
+
+            if (action) {
+                if (/\.jsonp/i.test(action)) {
+                    ajax.getScript(action, loadTemplateMockDataSuccess, loadTemplateMockDataFailed);
+                } else {
+                    ajax.getJSON('GET', action, null, loadTemplateMockDataSuccess, loadTemplateMockDataFailed);
+                }
             } else {
                 renderTemplate(tag);
             }

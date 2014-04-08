@@ -1,4 +1,7 @@
-define(['var/noop'], function(noop) {
+define([
+    'var/noop',
+    'var/document'
+], function(noop, document) {
     'use strict';
 
     var ajax = (function() {
@@ -114,9 +117,33 @@ define(['var/noop'], function(noop) {
             xhr = null;
         }
 
+        function getScript(url, successFn, failFn) {
+            var script = document.createElement('script'),
+                cb = function() {
+                    document.head.removeChild(script);
+                    script = null;
+                };
+
+            successFn = successFn || noop;
+            failFn = failFn || noop;
+
+            script.type = 'text/javascript';
+            script.src = url;
+            script.addEventListener('load', function() {
+                cb();
+                successFn();
+            });
+            script.addEventListener('error', function() {
+                cb();
+                failFn();
+            });
+            document.head.appendChild(script);
+        }
+
         return {
             send: send,
-            getJSON: getJSON
+            getJSON: getJSON,
+            getScript: getScript
         };
     }());
 

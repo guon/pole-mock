@@ -4,8 +4,7 @@ define([
     'tag-parser',
     'var/document',
     'var/suffix',
-    'var/format-string'
-], function(pole, ajax, tagParser, document, suffix, formatString) {
+], function(pole, ajax, tagParser, document, suffix) {
     'use strict';
 
     pole.mockMode = true;
@@ -68,16 +67,24 @@ define([
 
         var loadTemplateMockData = function(tag) {
             var action = pole.url.apply(pole, [tag.params.action].concat(tag.params.actionArgs ? tag.params.actionArgs.split(',') : []));
-            if (action) {
-                ajax.getJSON('GET', action, null, function(response) {
+
+            var loadTemplateMockDataSuccess = function(response) {
                     if (templateStatus !== -1) {
                         renderTemplate(tag, response);
                         templateStatus++;
                     }
-                }, function() {
+                },
+                loadTemplateMockDataFailed = function() {
                     templateStatus = -1;
                     throw '加载模板mock数据失败：' + action;
-                });
+                };
+
+            if (action) {
+                if (/\.jsonp/i.test(action)) {
+                    ajax.getScript(action, loadTemplateMockDataSuccess, loadTemplateMockDataFailed);
+                } else {
+                    ajax.getJSON('GET', action, null, loadTemplateMockDataSuccess, loadTemplateMockDataFailed);
+                }
             } else {
                 renderTemplate(tag);
             }

@@ -8,5 +8,14 @@ define(['ajax'], function(ajax) {
                 start();
             });
         });
+
+        asyncTest('ajax getScript', function() {
+            ajax.getScript('data/getscript.jsonp');
+        });
     };
 });
+
+function callback1(response) {
+    ok(response, 'test JSONP');
+    start();
+};
