@@ -3,8 +3,9 @@ define([
     'ajax',
     'tag-parser',
     'var/document',
-    'var/suffix'
-], function(pole, ajax, tagParser, document, suffix) {
+    'var/suffix',
+    'var/format-string'
+], function(pole, ajax, tagParser, document, suffix, formatString) {
     'use strict';
 
     pole.mockMode = true;
@@ -66,7 +67,7 @@ define([
         };
 
         var loadTemplateMockData = function(tag) {
-            var action = pole.url(tag.params.action);
+            var action = pole.url.apply(pole, [tag.params.action].concat(tag.params.actionArgs ? tag.params.actionArgs.split(',') : []));
             if (action) {
                 ajax.getJSON('GET', action, null, function(response) {
                     if (templateStatus !== -1) {
