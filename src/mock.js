@@ -13,7 +13,9 @@ define([
     pole.initMock = function(configUrl, callbackFn) {
         var templateStatus = 0, // 模板文件加载状态
             templateLength = 0,
-            templateReadyTimer;
+            templateReadyTimer,
+            jsonpRe = /\.js$/i,
+            tmplRe = /\.tmpl$/i;
 
         var templateReady = function(fn) {
             clearTimeout(templateReadyTimer);
@@ -36,7 +38,7 @@ define([
                 url = options.url;
                 engine = options.engine;
             }
-            url = /\.tmpl$/i.test(url) ? url : suffix(url, 'tpl');
+            url = tmplRe.test(url) ? url : suffix(url, 'tpl');
             ajax.send('GET', url, null, function(response) {
                 if (templateStatus !== -1) {
                     pole.putTemplates(name, {
@@ -81,7 +83,7 @@ define([
                 };
 
             if (action) {
-                if (/\.jsonp/i.test(action)) {
+                if (jsonpRe.test(action)) {
                     ajax.getScript(action, loadTemplateMockDataSuccess, loadTemplateMockDataFailed);
                 } else {
                     ajax.getJSON('GET', action, null, loadTemplateMockDataSuccess, loadTemplateMockDataFailed);
@@ -175,7 +177,7 @@ define([
                     if (typeof url === 'object') {
                         url = url.mock;
                     }
-                    pole.putActions(key, /\.jsonp$/i.test(url) ? url : suffix(url, 'json'));
+                    pole.putActions(key, jsonpRe.test(url) ? url : suffix(url, 'json'));
                 }
             }
             if (templates) {
