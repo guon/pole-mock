@@ -625,22 +625,21 @@
                 nextSibling = tag.node.nextSibling,
                 fragment,
                 div,
-                i = 0,
-                len,
-                childNodes;
+                childNodes,
+                childNode;
 
             fragment = pole.render(tag.params.name, data || {});
             div = document.createElement('div');
             div.innerHTML = fragment;
 
             childNodes = div.childNodes;
-            len = childNodes.length;
 
-            for (; i < len; i++) {
+            while (childNodes.length > 0) {
+                childNode = Array.prototype.unshift.call(childNodes);
                 if (nextSibling) {
-                    parentNode.insertBefore(childNodes[i], nextSibling);
+                    parentNode.insertBefore(childNode, nextSibling);
                 } else {
-                    parentNode.appendChild(childNodes[i]);
+                    parentNode.appendChild(childNode);
                 }
             }
 
