@@ -1,2 +1,2 @@
-pole-mock
+Pole Mock API
 =========
