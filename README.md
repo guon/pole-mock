@@ -22,7 +22,8 @@ npm install pole-mock --save-dev
 在Web应用的html中引入```pole-mock.js```，如下：
 
 ```html
-<script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
+<script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" 
+    data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
 ```
 
 在完成Pole Compiler之后，```pole-mock.js```将会被```pole-releaser.js```取代。
