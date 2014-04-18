@@ -23,7 +23,7 @@ npm install pole-mock --save-dev
 
 ```html
 <script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" 
-    data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
+        data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
 ```
 
 在完成Pole Compiler之后，```pole-mock.js```将会被```pole-releaser.js```取代。
