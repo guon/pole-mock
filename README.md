@@ -131,13 +131,48 @@ require(['pole', 'mustache'], function(pole, Mustache) {
 ```
 
 #### url( String name, [...args] )
+获取url，如果在静态环境中，返回的是mock-url，如果是正式环境依赖```pole-release.js```，则返回正式url。
 
+参数：
+* name action名称
+* ...args url中格式化参数
+
+调用方法：
+
+```js
+$.ajax({
+    dataType: 'jsonp',
+    url: pole.url('grid-data', page, (page - 1) * pageSize),
+    crossDomain: true,
+    jsonp: 'callback',
+    jsonpCallback: 'jsonpCallback',
+    complete: function() {
+        loading = false;
+    }
+});
+```
 
 #### tpl( String name )
+获取模版对象，pole-mock会将模版默认使用模版引擎接口封装，它的返回值是如下：
+* Mustache，返回```Mustache.parse()```的返回值
+* ArtTemplate，返回```template.compile()```的返回值
+* Underscore Tempalte，返回```_.template()```的返回值
 
+参数：
+* name 模版名称
 
 #### render( String name, Object data)
+渲染模版，得到模版应用数据构建之后的返回值。
 
+参数：
+* name 模版名称
+* 渲染数据
+
+调用方法：
+
+```js
+$tbody.append(pole.render('grid', data));
+```
 
 pole-release.js
 ---------------
@@ -145,9 +180,9 @@ pole-release.js
 
 pole-release包含三部分内容：
 
-* ```pole-core.js```核心库
-* 正式环境actions
-* 模版文件
+* ```pole-core.js```核心库，```pole-mock.js```也会包含这个库；
+* 正式环境中映射的```actions```，在mock-config中配置；
+* 模版文件；
 
 Usage Examples
 --------------
