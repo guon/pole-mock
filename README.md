@@ -20,7 +20,6 @@ Mock配置文件
 指定模版，键值对形式，值是模版文件的相对路径，模版文件后缀只能为```tpl```或```tmpl```。
 
 配置时可以不写后缀，框架会自动添加，格式如下：
-
 ```
 "templates": {
     "message": "templates/message",
@@ -34,7 +33,6 @@ Pole Mock提供两个接口操作模版```pole.tpl()```和```pole.render()```，
 指定mock url，后缀只能为```json```或```js```，```js```是为满足JSONP的需求。
 
 配置时可以不写后缀，框架会自动添加，格式如下：
-
 ```
 "actions": {
     // 普通一个mock url
@@ -58,7 +56,6 @@ Pole Mock提供两个接口操作模版```pole.tpl()```和```pole.render()```，
 引入```pole-mock.js```
 ----------------------
 在html中引入```pole-mock.js```，如下：
-
 ```html
 <script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" 
         data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
@@ -80,7 +77,6 @@ Pole Tag（html标签）
 
 #### 模版标签（PoleTemplateTag）
 格式：
-
 ```html
 <!--PoleTemplateTag name="message" action="message" /EndTag-->
 ```
@@ -114,7 +110,6 @@ Pole在静态环境中使用```pole-mock.js```，在正式环境中使用打包�
 
 #### initMock( String mockConfig, Function callbackFn )
 如果Web应用依赖```Require.js```或```Sea.js```这样的模块化JS库，就需要使用```initMock()```函数初始化Pole Mock，如下：
-
 ```js
 require.config({
     paths: {
