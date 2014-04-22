@@ -113,7 +113,7 @@ Pole JavaScript API
 Pole在静态环境中使用```pole-mock.js```，在正式环境中使用打包之后的```pole-release.js```替代。
 
 #### initMock( String mockConfig, Function callbackFn )
-如果Web应用依赖```Require.js```或```Sea.js```这样的模块化库，就需要使用```initMock()```函数初始化Pole Mock，如下：
+如果Web应用依赖```Require.js```或```Sea.js```这样的模块化JS库，就需要使用```initMock()```函数初始化Pole Mock，如下：
 
 ```js
 require.config({
@@ -143,7 +143,7 @@ pole-release.js
 ---------------
 ```pole-release.js```是在执行```pole compile```之后生成的一个打包文件，在正式环境中替代```pole-mock.js```。
 
-```pole-release.js```包含三部分内容：
+pole-release包含三部分内容：
 
 * ```pole-core.js```核心库
 * 正式环境actions
