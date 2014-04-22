@@ -81,7 +81,7 @@ Pole Tag（html标签）
 #### 模版标签（PoleTemplateTag）
 格式：
 
-```
+```html
 <!--PoleTemplateTag name="message" action="message" /EndTag-->
 ```
 
@@ -98,9 +98,10 @@ Pole Tag（html标签）
 碎片标签在静态环境中会被忽略，但在执行```pole compile```时，碎片标签将会被替换成指定的碎片内容，参见：[Pole Compiler文档](https://github.com/polejs/pole#fragmentdir--string)。
 
 格式：
-```
+```html
 <!--PoleFragmentTag name="index-script" /-->
-<script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
+<script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" 
+        data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
 <!--/EndTag-->
 ```
 
@@ -143,6 +144,7 @@ pole-release.js
 ```pole-release.js```是在执行```pole compile```之后生成的一个打包文件，在正式环境中替代```pole-mock.js```。
 
 ```pole-release.js```包含三部分内容：
+
 * ```pole-core.js```核心库
 * 正式环境actions
 * 模版文件
