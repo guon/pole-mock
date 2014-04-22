@@ -138,7 +138,6 @@ require(['pole', 'mustache'], function(pole, Mustache) {
 * ...args url中格式化参数
 
 调用方法：
-
 ```js
 $.ajax({
     dataType: 'jsonp',
@@ -169,7 +168,6 @@ $.ajax({
 * 渲染数据
 
 调用方法：
-
 ```js
 $tbody.append(pole.render('grid', data));
 ```
