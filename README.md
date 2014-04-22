@@ -21,7 +21,7 @@ Mock配置文件
 
 配置时可以不写后缀，框架会自动添加，格式如下：
 
-```json
+```
 "templates": {
     "message": "templates/message",
     "grid": "templates/grid"
@@ -31,13 +31,19 @@ Mock配置文件
 Pole Mock提供两个接口操作模版```pole.tpl()```和```pole.render()```，下面会详细介绍。
 
 #### actions : Object
-指定mock url，格式如下：
+指定mock url，后缀只能为```json```或```js```，```js```是为满足JSONP的需求。
 
-```json
+配置时可以不写后缀，框架会自动添加，格式如下：
+
+```
 "actions": {
-    "message": "mock_datas/message", // 
-    "infinite-data-init": "mock_datas/infinite-data-{0}",
+    // 普通一个mock url
+    "message": "mock_datas/message",
+    
+    // 带参数
     "grid-data-init": "mock_datas/grid-data-{0}",
+    
+    // mock url与正式环境url的映射
     "grid-data": {
         "mock": "mock_datas/infinite-data-{0}.js",
         "url": "http://www.sencha.com/forum/remote_topics/index.php?page={0}&start={1}&limit=100&sort=threadid&dir=DESC"
@@ -45,41 +51,101 @@ Pole Mock提供两个接口操作模版```pole.tpl()```和```pole.render()```，
 }
 ```
 
+以上参数的url，都可以使用```pole.url()```格式化，使用方法参见下面文档。
+
+只有配置了正式url的action最终才会被收录到```pole-release.js```中，有关```pole-release.js```参见下面文档。
 
 引入```pole-mock.js```
 ----------------------
-
-在Web应用的html中引入```pole-mock.js```，如下：
+在html中引入```pole-mock.js```，如下：
 
 ```html
 <script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" 
         data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
 ```
 
-在完成Pole Compiler之后，```pole-mock.js```将会被```pole-releaser.js```取代。
+#### data-config : String
+指定Pole Mock配置文件。
 
+#### data-main : String
+指定主脚本文件，在Pole Mock完成初始化之后执行。
 
+```pole-mock.js```仅用在静态环境中使用，完成```pole compile```后，```pole-mock.js```将会被```pole-releaser.js```替代。
 
+Pole Tag（html标签）
+-------------------
+很多业务都需要动态构建首屏，那么在静态环境html中使用Pole Tag，就能实现在静态环境中测试动态构建首屏的需求。
 
-Pole Tag
---------
+最终静态html（包括页面中的Pole标签）将会被```pole compile```编译成目标语言动态页面文件。
 
-### 模版标签（PoleTemplateTag）
+#### 模版标签（PoleTemplateTag）
+格式：
 
+```
+<!--PoleTemplateTag name="message" action="message" /EndTag-->
+```
 
-### 碎片标签（PoleFragmentTag）
+##### name : String
+指定模版名，模版名在```pole-mock-config.json```的```templates```配置项中查找，如果未找到，则忽略渲染此Tag。
 
+##### action : String
+指定模版初始化mock数据，action在```pole-mock-config.json```的```actions```配置项中查找。
+
+##### actionArgs : String
+指定格式化action使用到的参数，多个参数使用逗号隔开，例如：```actionArgs="1,2"```。
+
+#### 碎片标签（PoleFragmentTag）
+碎片标签在静态环境中会被忽略，但在执行```pole compile```时，碎片标签将会被替换成指定的碎片内容，参见：[Pole Compiler文档](https://github.com/polejs/pole#fragmentdir--string)。
+
+格式：
+```
+<!--PoleFragmentTag name="index-script" /-->
+<script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
+<!--/EndTag-->
+```
+
+#### name : String
+指定碎片名称，如果不写后缀，默认为'fr'。
 
 Pole JavaScript API
 -------------------
+Pole在静态环境中使用```pole-mock.js```，在正式环境中使用打包之后的```pole-release.js```替代。
 
-### url()
+#### initMock( String mockConfig, Function callbackFn )
+如果Web应用依赖```Require.js```或```Sea.js```这样的模块化库，就需要使用```initMock()```函数初始化Pole Mock，如下：
+
+```js
+require.config({
+    paths: {
+        pole: 'assets/node_modules/pole-mock/pole-mock',
+        mustache: 'assets/node_modules/mustache/mustache'
+    }
+});
+require(['pole', 'mustache'], function(pole, Mustache) {
+    window.Mustache = Mustache;
+    pole.initMock('pole-mock-config', function() {
+        require(['assets/scripts/require-main']);
+    });
+});
+```
+
+#### url( String name, [...args] )
 
 
-### tpl()
+#### tpl( String name )
 
 
-### render()
+#### render( String name, Object data)
+
+
+pole-release.js
+---------------
+```pole-release.js```是在执行```pole compile```之后生成的一个打包文件，在正式环境中替代```pole-mock.js```。
+
+```pole-release.js```包含三部分内容：
+* ```pole-core.js```核心库
+* 正式环境actions
+* 模版文件
 
 Usage Examples
 --------------
