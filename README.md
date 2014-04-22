@@ -77,7 +77,7 @@ Pole Tag（html标签）
 
 #### 模版标签（PoleTemplateTag）
 格式：
-```html
+```
 <!--PoleTemplateTag name="message" action="message" /EndTag-->
 ```
 
@@ -94,7 +94,7 @@ Pole Tag（html标签）
 碎片标签在静态环境中会被忽略，但在执行```pole compile```时，碎片标签将会被替换成指定的碎片内容，参见：[Pole Compiler文档](https://github.com/polejs/pole#fragmentdir--string)。
 
 格式：
-```html
+```
 <!--PoleFragmentTag name="index-script" /-->
 <script type="text/javascript" src="assets/node_modules/pole-mock/pole-mock.js" 
         data-config="pole-mock-config" data-main="assets/scripts/index-main"></script>
