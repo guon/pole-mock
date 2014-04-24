@@ -1,7 +1,7 @@
 {
     "name": "pole-mock",
     "description": "Pole前端开发静态化解决方案",
-    "version": "0.0.14",
+    "version": "0.1.0",
     "homepage": "https://github.com/polejs/pole-mock",
     "author": {
         "name": "Max Zhang",
